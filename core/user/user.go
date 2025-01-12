@@ -471,3 +471,11 @@ func getUserFromRow(row *sql.Row) *User {
 		Scopes:        scopes,
 	}
 }
+
+func GetMetadataString(id string, key string) (string, error) {
+	return data.GetUserMetadataString(_datastore.DB, id, key)
+}
+
+func SetMetadataString(id string, key string, value string) error {
+	return data.PutUserMetadataString(_datastore.DB, id, key, value)
+}

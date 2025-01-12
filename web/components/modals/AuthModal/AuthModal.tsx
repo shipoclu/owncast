@@ -33,11 +33,7 @@ export const AuthModal: FC<AuthModalProps> = ({ forceTabs }) => {
   const { federation } = clientConfig;
   const { enabled: fediverseEnabled } = federation;
 
-  const web3AuthTabTitle = (
-    <span className={styles.tabContent}>
-      Web3 Auth
-    </span>
-  );
+  const web3AuthTabTitle = <span className={styles.tabContent}>Web3 Auth</span>;
 
   const web3AuthTab = (
     <Web3AuthModal

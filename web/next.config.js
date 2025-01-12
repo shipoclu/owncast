@@ -76,7 +76,17 @@ module.exports = async phase => {
           unoptimized: true,
         },
         swcMinify: true,
-        transpilePackages: [ "antd", "@ant-design", "rc-util", "rc-pagination", "rc-picker", "rc-notification", "rc-tooltip", "rc-tree", "rc-table" ],
+        transpilePackages: [
+          'antd',
+          '@ant-design',
+          'rc-util',
+          'rc-pagination',
+          'rc-picker',
+          'rc-notification',
+          'rc-tooltip',
+          'rc-tree',
+          'rc-table',
+        ],
         webpack(config) {
           config.module.rules.push({
             test: /\.svg$/i,
@@ -97,7 +107,7 @@ module.exports = async phase => {
       rewrites,
       poweredByHeader: false,
       serverRuntimeConfig: {
-        trustProxy: true
+        trustProxy: true,
       },
     };
   } else {

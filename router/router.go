@@ -17,6 +17,7 @@ import (
 	"github.com/owncast/owncast/controllers/admin"
 	fediverseauth "github.com/owncast/owncast/controllers/auth/fediverse"
 	"github.com/owncast/owncast/controllers/auth/indieauth"
+	web3auth "github.com/owncast/owncast/controllers/auth/web3"
 	"github.com/owncast/owncast/controllers/moderation"
 	"github.com/owncast/owncast/core/chat"
 	"github.com/owncast/owncast/core/data"
@@ -391,6 +392,8 @@ func Start() error {
 
 	http.HandleFunc("/api/auth/fediverse", middleware.RequireUserAccessToken(fediverseauth.RegisterFediverseOTPRequest))
 	http.HandleFunc("/api/auth/fediverse/verify", fediverseauth.VerifyFediverseOTPRequest)
+
+	http.HandleFunc("/api/auth/web3/verify", middleware.RequireUserAccessToken(web3auth.StartAuthFlow))
 
 	// ActivityPub has its own router
 	activitypub.Start(data.GetDatastore())

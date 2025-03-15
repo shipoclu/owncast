@@ -78,6 +78,7 @@ func SetupPersistence(file string) error {
 	createWebhooksTable()
 	tables.CreateUsersTable(db)
 	tables.CreateAccessTokenTable(db)
+	createUserMetadataTable(db)
 
 	if _, err := db.Exec(`CREATE TABLE IF NOT EXISTS config (
 		"key" string NOT NULL PRIMARY KEY,

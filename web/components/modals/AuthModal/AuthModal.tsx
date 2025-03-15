@@ -4,6 +4,7 @@ import { FC } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { IndieAuthModal } from '../IndieAuthModal/IndieAuthModal';
 import { FediAuthModal } from '../FediAuthModal/FediAuthModal';
+import { Web3AuthModal } from '../Web3AuthModal/Web3AuthModal';
 
 import styles from './AuthModal.module.scss';
 import {
@@ -31,6 +32,16 @@ export const AuthModal: FC<AuthModalProps> = ({ forceTabs }) => {
   const { displayName } = currentUser;
   const { federation } = clientConfig;
   const { enabled: fediverseEnabled } = federation;
+
+  const web3AuthTabTitle = <span className={styles.tabContent}>Web3 Auth</span>;
+
+  const web3AuthTab = (
+    <Web3AuthModal
+      authenticated={authenticated}
+      displayName={displayName}
+      accessToken={accessToken}
+    />
+  );
 
   const indieAuthTabTitle = (
     <span className={styles.tabContent}>
@@ -63,8 +74,9 @@ export const AuthModal: FC<AuthModalProps> = ({ forceTabs }) => {
   );
 
   const items = [
-    { label: indieAuthTabTitle, key: '1', children: indieAuthTab },
-    { label: fediAuthTabTitle, key: '2', children: fediAuthTab },
+    { label: web3AuthTabTitle, key: '1', children: web3AuthTab },
+    { label: indieAuthTabTitle, key: '2', children: indieAuthTab },
+    { label: fediAuthTabTitle, key: '3', children: fediAuthTab },
   ];
 
   return (

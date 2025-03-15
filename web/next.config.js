@@ -16,31 +16,33 @@ const withPWA = require('next-pwa')({
   disable: process.env.NODE_ENV === 'development',
 });
 
+const port = 9008;
+
 async function rewrites() {
   return [
     {
       source: '/api/:path*',
-      destination: 'http://localhost:8080/api/:path*', // Proxy to Backend to work around CORS.
+      destination: `http://localhost:${port}/api/:path*`, // Proxy to Backend to work around CORS.
     },
     {
       source: '/hls/:path*',
-      destination: 'http://localhost:8080/hls/:path*', // Proxy to Backend to work around CORS.
+      destination: `http://localhost:${port}/hls/:path*`, // Proxy to Backend to work around CORS.
     },
     {
       source: '/img/:path*',
-      destination: 'http://localhost:8080/img/:path*', // Proxy to Backend to work around CORS.
+      destination: `http://localhost:${port}/img/:path*`, // Proxy to Backend to work around CORS.
     },
     {
       source: '/logo',
-      destination: 'http://localhost:8080/logo', // Proxy to Backend to work around CORS.
+      destination: `http://localhost:${port}/logo`, // Proxy to Backend to work around CORS.
     },
     {
       source: '/thumbnail.jpg',
-      destination: 'http://localhost:8080/thumbnail.jpg', // Proxy to Backend to work around CORS.
+      destination: `http://localhost:${port}/thumbnail.jpg`, // Proxy to Backend to work around CORS.
     },
     {
       source: '/customjavascript',
-      destination: 'http://localhost:8080/customjavascript', // Proxy to Backend to work around CORS.
+      destination: `http://localhost:${port}/customjavascript`, // Proxy to Backend to work around CORS.
     },
   ];
 }
@@ -88,6 +90,10 @@ module.exports = async phase => {
     nextConfig = {
       ...nextConfig,
       rewrites,
+      poweredByHeader: false,
+      serverRuntimeConfig: {
+        trustProxy: true,
+      },
     };
   } else {
     nextConfig = {

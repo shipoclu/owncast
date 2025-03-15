@@ -42,6 +42,8 @@ type UserRepository interface {
 	AddAuth(userID, authToken string, authType models.AuthType) error
 	SetExternalAPIUserAccessTokenAsUsed(token string) error
 	GetUsersCount() int
+	GetMetadataString(id string, key string) (string, error)
+	SetMetadataString(id string, key string, value string) error
 }
 
 type SqlUserRepository struct {
@@ -803,4 +805,12 @@ func (r *SqlUserRepository) GetUsersCount() int {
 		}
 	}
 	return count
+}
+
+func (r *SqlUserRepository) GetMetadataString(id string, key string) (string, error) {
+	return data.GetUserMetadataString(r.datastore.DB, id, key)
+}
+
+func (r *SqlUserRepository) SetMetadataString(id string, key string, value string) error {
+	return data.PutUserMetadataString(r.datastore.DB, id, key, value)
 }

@@ -32,9 +32,6 @@ import { exampleChatHistory } from '../../../interfaces/chat-message.fixture';
 
 const meta = {
   title: 'owncast/Layout/Main',
-  parameters: {
-    layout: 'fullscreen',
-  },
 } satisfies Meta<typeof Main>;
 
 export default meta;

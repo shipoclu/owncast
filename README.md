@@ -28,7 +28,6 @@
 	<a href="https://github.com/owncast/owncast/issues">Report Bug</a>
 </p>
 
-
 <!-- TABLE OF CONTENTS -->
 
 ## Table of Contents
@@ -106,7 +105,7 @@ The Owncast backend is a service written in Go.
 1. Ensure you have prerequisites installed.
    - C compiler, such as [GCC compiler](https://gcc.gnu.org/install/download.html) or a [Musl-compatible compiler](https://musl.libc.org/)
    - [ffmpeg](https://ffmpeg.org/download.html)
-1. Install the [Go toolchain](https://golang.org/dl/) (1.22 or above).
+1. Install the [Go toolchain](https://golang.org/dl/) (1.24 or above).
 1. Clone the repo. `git clone https://github.com/owncast/owncast`
 1. `go run main.go` will run from the source.
 1. Visit `http://yourserver:8080` to access the web interface or `http://yourserver:8080/admin` to access the admin.
@@ -133,6 +132,7 @@ If you're new to the project, maybe you'd be interested in looking at [![Good Fi
 There is a larger, more detailed, and more up-to-date [guide for helping contribute to Owncast on our website](https://owncast.online/help/).
 
 ### Donors
+
 The Owncast project is possible thanks to the people who make a donation to support us and our work.
 Thank you to all our donors who help keep Owncast running by donating on OpenCollective. You can support this project by [becoming a backer/sponsor](https://opencollective.com/owncast#suppor).
 
@@ -169,6 +169,11 @@ style="vertical-align: middle;margin-left:5px" width="147" height="26"
 <li>UI testing with Chromatic
 <a href="https://chromatic.com" target="_blank">
 <img src="https://owncast.online/images/sponsors/chromatic.png" height="26" style="vertical-align: middle;margin-left:5px">
+</a>
+</li>
+<li>Infrastructure and hosting by
+<a href="https://digitalocean.com?utm_medium=opensource&utm_source=owncast" target="_blank">
+<img src="https://owncast.online/images/sponsors/digitalocean.svg" height="26" style="vertical-align: middle;margin-left:5px">
 </a>
 </li>
 </ul>

@@ -12,6 +12,7 @@ import (
 	"strings"
 
 	"github.com/owncast/owncast/activitypub/outbox"
+	"github.com/owncast/owncast/core"
 	"github.com/owncast/owncast/core/chat"
 	"github.com/owncast/owncast/core/webhooks"
 	"github.com/owncast/owncast/models"
@@ -87,6 +88,12 @@ func SetStreamTitle(w http.ResponseWriter, r *http.Request) {
 // ExternalSetStreamTitle will change the stream title on behalf of an external integration API request.
 func ExternalSetStreamTitle(integration models.ExternalAPIUser, w http.ResponseWriter, r *http.Request) {
 	SetStreamTitle(w, r)
+}
+
+// ExternalGetStatus will return the status of the server.
+func ExternalGetStatus(integration models.ExternalAPIUser, w http.ResponseWriter, r *http.Request) {
+	status := core.GetStatus()
+	webutils.WriteResponse(w, status)
 }
 
 func sendSystemChatAction(messageText string, ephemeral bool) {
@@ -916,31 +923,27 @@ func SetStreamKeys(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	type streamKeysRequest struct {
-		Value []models.StreamKey `json:"value"`
-	}
-
 	decoder := json.NewDecoder(r.Body)
-	var streamKeys streamKeysRequest
+	var streamKeys generated.SetStreamKeysJSONRequestBody
 	if err := decoder.Decode(&streamKeys); err != nil {
 		webutils.WriteSimpleResponse(w, false, "unable to update stream keys with provided values")
 		return
 	}
 
-	if len(streamKeys.Value) == 0 {
+	if streamKeys.Value == nil || len(*streamKeys.Value) == 0 {
 		webutils.WriteSimpleResponse(w, false, "must provide at least one valid stream key")
 		return
 	}
 
-	for _, streamKey := range streamKeys.Value {
-		if streamKey.Key == "" {
+	for _, streamKey := range *streamKeys.Value {
+		if *streamKey.Key == "" {
 			webutils.WriteSimpleResponse(w, false, "stream key cannot be empty")
 			return
 		}
 	}
 
 	configRepository := configrepository.Get()
-	if err := configRepository.SetStreamKeys(streamKeys.Value); err != nil {
+	if err := configRepository.SetStreamKeys(*streamKeys.Value); err != nil {
 		webutils.WriteSimpleResponse(w, false, err.Error())
 		return
 	}

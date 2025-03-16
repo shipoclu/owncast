@@ -1,7 +1,7 @@
 openapi: 3.1.0
 
 info:
-  version: 0.2.0
+  version: 0.2.2
   title: Owncast APIs
   description: |-
     Internal
@@ -3134,6 +3134,26 @@ paths:
       responses:
         '204':
           $ref: '#/components/responses/204'
+  /integrations/status:
+    get:
+      summary: Get the server's status
+      operationId: ExternalGetStatus
+      tags: ['External']
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+        '401':
+          $ref: '#/components/responses/401BasicAuth'
+        '404':
+          $ref: '#/components/responses/404'
+        default:
+          $ref: '#/components/responses/Default'
   /integrations/streamtitle:
     post:
       summary: Stream title
@@ -3310,7 +3330,6 @@ paths:
       tags: ['Internal', 'Auth', 'Chat']
       parameters:
         - $ref: '#/components/parameters/IndieAuthState'
-        - $ref: '#/components/parameters/IndieAuthCode'
       responses:
         '307':
           description: Redirected to home page
@@ -3328,7 +3347,6 @@ paths:
         - $ref: '#/components/parameters/IndieAuthRedirectURI'
         - $ref: '#/components/parameters/IndieAuthCodeChallenge'
         - $ref: '#/components/parameters/IndieAuthState'
-        - $ref: '#/components/parameters/IndieAuthCode'
       responses:
         '200':
           description: IndieAuth flow concluded
@@ -4427,12 +4445,6 @@ components:
     IndieAuthState:
       in: query
       name: state
-      schema:
-        type: string
-      required: true
-    IndieAuthCode:
-      in: query
-      name: code
       schema:
         type: string
       required: true

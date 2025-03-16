@@ -5,7 +5,6 @@ import { Footer } from './Footer';
 const meta = {
   title: 'owncast/Layout/Footer',
   component: Footer,
-  parameters: {},
 } satisfies Meta<typeof Footer>;
 
 export default meta;

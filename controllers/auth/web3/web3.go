@@ -75,7 +75,7 @@ func handleAuthEndpointPost(u models.User, w http.ResponseWriter, r *http.Reques
 
 	log.Debugln(fmt.Sprintf("Succeeded create user for: %s", address))
 
-	err := user.SetMetadataString(u.ID, "eth_address", address)
+	err := userRepository.SetMetadataString(u.ID, "eth_address", address)
 	if err != nil {
 		log.Errorln(fmt.Sprintf("Could not set user id %s eth_address to %s with error: %s", u.ID, address, err))
 		// Keep going.

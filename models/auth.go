@@ -8,4 +8,5 @@ const (
 	// IndieAuth https://indieauth.spec.indieweb.org/.
 	IndieAuth AuthType = "indieauth"
 	Fediverse AuthType = "fediverse"
+	Web3      AuthType = "web3"
 )

@@ -77,6 +77,15 @@ module.exports = async phase => {
             use: ['@svgr/webpack'],
           });
 
+          // Add node_modules to resolve
+          config.resolve = {
+            ...config.resolve,
+            modules: ['node_modules', 'web/node_modules', ...(config.resolve.modules || [])],
+            fallback: {
+              ...config.resolve.fallback,
+            }
+          };
+
           return config;
         },
         pageExtensions: ['tsx'],

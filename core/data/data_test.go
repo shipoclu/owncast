@@ -91,7 +91,7 @@ func TestCustomType(t *testing.T) {
 	}
 
 	// Save config entry to the database
-	if err := _datastore.Save(models.ConfigEntry{&testStruct, testKey}); err != nil {
+	if err := _datastore.Save(models.ConfigEntry{Value: &testStruct, Key: testKey}); err != nil {
 		t.Error(err)
 	}
 

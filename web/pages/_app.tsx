@@ -15,6 +15,19 @@ import { ReactElement, ReactNode } from 'react';
 import { NextPage } from 'next';
 import { RecoilRoot } from 'recoil';
 
+import { http, createConfig, WagmiProvider } from 'wagmi';
+import { base } from 'wagmi/chains';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const config = createConfig({
+  chains: [base],
+  transports: {
+    [base.id]: http(),
+  },
+});
+
+const queryClient = new QueryClient();
+
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
   getLayout?: (page: ReactElement) => ReactNode;
 };
@@ -28,7 +41,11 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
   return layout(
     <RecoilRoot>
-      <Component {...pageProps} />
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <Component {...pageProps} />
+        </QueryClientProvider>
+      </WagmiProvider>
     </RecoilRoot>,
   );
 }

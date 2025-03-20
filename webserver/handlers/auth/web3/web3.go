@@ -14,7 +14,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func handleAuthEndpointPost(u models.User, w http.ResponseWriter, r *http.Request) {
+func VerifyWeb3Auth(u models.User, w http.ResponseWriter, r *http.Request) {
 	accessToken := r.URL.Query().Get("accessToken")
 
 	decoder := json.NewDecoder(r.Body)
@@ -34,23 +34,33 @@ func handleAuthEndpointPost(u models.User, w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	address := strings.ToLower(req.Address)
-
 	verified := web3auth.Verify(req.Signature, req.Address, req.Hostname, req.Message, req.Timestamp)
 
 	if !verified {
-		webutils.WriteSimpleResponse(w, false, "Could not register auth request")
+		webutils.WriteSimpleResponse(w, false, "Could not verify web3 authentication request")
 		return
 	}
 
 	userRepository := userrepository.Get()
 
-	eu := userRepository.GetUserByAuth(address, models.Web3)
+	loweredAddress := strings.ToLower(req.Address)
 
-	displayName := req.DisplayName
+	eu := userRepository.GetUserByAuth(loweredAddress, models.Web3)
 
 	if eu != nil {
-		if displayName != req.DisplayName {
+		log.Debug(fmt.Sprintf("Got user by auth: %s", eu.ID))
+
+		if err := userRepository.SetUserAsAuthenticated(eu.ID); err != nil {
+			log.Errorln(err)
+		}
+
+		log.Debug(fmt.Sprintf("User %s (%s) was set as authenticated", eu.DisplayName, eu.ID))
+
+		log.Debug(fmt.Sprintf("Comparing authed name: %s with request name: %s", eu.DisplayName, req.DisplayName))
+
+		if eu.DisplayName != req.DisplayName {
+			log.Debug(fmt.Sprintf("The name has changed, updating the user from %s to %s and reassigning accesstoken", req.DisplayName, eu.DisplayName))
+
 			loginMessage := fmt.Sprintf("**%s** is now authenticated as **%s**", req.DisplayName, eu.DisplayName)
 
 			if err := userRepository.SetAccessTokenToOwner(accessToken, eu.ID); err != nil {
@@ -63,26 +73,29 @@ func handleAuthEndpointPost(u models.User, w http.ResponseWriter, r *http.Reques
 			}
 		}
 
+		webutils.WriteSimpleResponse(w, true, "")
 		return
 	}
 
 	log.Debug("web3 account does not already exist, saving it as a new one for the current user")
-	if err := userRepository.AddAuth(u.ID, address, models.Fediverse); err != nil {
-		log.Errorln(fmt.Sprintf("Failed to create user for: %s", address))
+	if err := userRepository.AddAuth(u.ID, loweredAddress, models.Web3); err != nil {
+		log.Errorln(fmt.Sprintf("Failed to create user for: %s", loweredAddress))
 		webutils.WriteSimpleResponse(w, false, err.Error())
 		return
 	}
 
-	log.Debugln(fmt.Sprintf("Succeeded create user for: %s", address))
+	log.Debugln(fmt.Sprintf("Succeeded create user for: %s", loweredAddress))
 
-	err := userRepository.SetMetadataString(u.ID, "eth_address", address)
+	err := userRepository.SetMetadataString(u.ID, "eth_address", loweredAddress)
 	if err != nil {
-		log.Errorln(fmt.Sprintf("Could not set user id %s eth_address to %s with error: %s", u.ID, address, err))
+		log.Errorln(fmt.Sprintf("Could not set user id %s eth_address to %s with error: %s", u.ID, loweredAddress, err))
 		// Keep going.
 	}
 
 	if err := userRepository.SetUserAsAuthenticated(u.ID); err != nil {
 		log.Errorln(err)
+		webutils.WriteSimpleResponse(w, false, err.Error())
+		return
 	}
 
 	webutils.WriteSimpleResponse(w, true, "")
@@ -90,7 +103,7 @@ func handleAuthEndpointPost(u models.User, w http.ResponseWriter, r *http.Reques
 
 func StartAuthFlow(u models.User, w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
-		handleAuthEndpointPost(u, w, r)
+		VerifyWeb3Auth(u, w, r)
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return

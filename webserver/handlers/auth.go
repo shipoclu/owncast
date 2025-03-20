@@ -5,6 +5,7 @@ import (
 
 	"github.com/owncast/owncast/webserver/handlers/auth/fediverse"
 	"github.com/owncast/owncast/webserver/handlers/auth/indieauth"
+	"github.com/owncast/owncast/webserver/handlers/auth/web3"
 	"github.com/owncast/owncast/webserver/handlers/generated"
 	"github.com/owncast/owncast/webserver/router/middleware"
 )
@@ -31,4 +32,8 @@ func (*ServerInterfaceImpl) RegisterFediverseOTPRequest(w http.ResponseWriter, r
 
 func (*ServerInterfaceImpl) VerifyFediverseOTPRequest(w http.ResponseWriter, r *http.Request) {
 	fediverse.VerifyFediverseOTPRequest(w, r)
+}
+
+func (*ServerInterfaceImpl) VerifyWeb3Auth(w http.ResponseWriter, r *http.Request) {
+	middleware.RequireUserAccessToken(web3.VerifyWeb3Auth)(w, r)
 }

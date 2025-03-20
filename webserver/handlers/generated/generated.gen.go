@@ -647,6 +647,10 @@ type ServerInterface interface {
 	// Get the YP protocol data
 	// (GET /yp)
 	GetYPResponse(w http.ResponseWriter, r *http.Request)
+
+	// Verify web3 authentication
+	// (POST /auth/web3/verify)
+	VerifyWeb3Auth(w http.ResponseWriter, r *http.Request)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -1824,6 +1828,12 @@ func (_ Unimplemented) GetVideoStreamOutputVariants(w http.ResponseWriter, r *ht
 // Get the YP protocol data
 // (GET /yp)
 func (_ Unimplemented) GetYPResponse(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// Verify web3 authentication
+// (POST /auth/web3/verify)
+func (_ Unimplemented) VerifyWeb3Auth(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -5747,6 +5757,20 @@ func (siw *ServerInterfaceWrapper) GetYPResponse(w http.ResponseWriter, r *http.
 	handler.ServeHTTP(w, r)
 }
 
+// VerifyWeb3Auth operation middleware
+func (siw *ServerInterfaceWrapper) VerifyWeb3Auth(w http.ResponseWriter, r *http.Request) {
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.VerifyWeb3Auth(w, r)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r)
+}
+
 type UnescapedCookieParamError struct {
 	ParamName string
 	Err       error
@@ -6492,6 +6516,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	})
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/yp", wrapper.GetYPResponse)
+	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/auth/web3/verify", wrapper.VerifyWeb3Auth)
 	})
 
 	return r
